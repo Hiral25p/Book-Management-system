@@ -1,5 +1,15 @@
 from tkinter import *
 import backend
+import re
+
+def errormessage(error_field):
+    '''Error fo'''
+    error=Tk()
+    error.wm_title("Error")
+    error_lable = Label(error,text=f"Invalid {error_field}")
+    error_lable.grid(row=1,column=0)
+    error.mainloop()
+    
 
 def viewcommand():
     """
@@ -23,14 +33,26 @@ def add_command():
     """
     It takes the data from the entry boxes and passes it to the backend.insert function
     """
-    backend.insert(title_text.get(),author_text.get(),year_text.get(),Price_text.get())
-    list1.delete(0,END)
-    list1.insert(END,"Press View all to see the new entry")
-
+    if len(re.findall("\d{4}",year_text.get()))==0:
+       errormessage("Year")
+    elif len(re.findall("\d+", Price_text.get()))==0:
+       errormessage("Price")
+    elif len(re.findall("^[a-zA-Z0-9 ]*$", author_text.get()))==0:
+       errormessage("Author")
+    elif len(re.findall("^[a-zA-Z0-9 ]*$", title_text.get()))==0:
+       errormessage("Title")
+    
+    
+    else:
+        backend.insert(title_text.get(),author_text.get(),year_text.get(),Price_text.get())
+        list1.delete(0,END)
+        list1.insert(END,"Press View all to see the new entry")
+    
+   
 def get_selected_row(event):
     """
     It gets the selected row from the listbox and inserts the values into the entry boxes
-    
+
     :param event: The event is a tkinter event
     """
     try:
@@ -57,20 +79,28 @@ def delete_command():
     """
     It deletes the selected tuple from the database
     """
-    backend.delete(selected_tuple[0])
-    e1.delete(0,END)
-    e2.delete(0,END)
-    e3.delete(0,END)
-    e4.delete(0,END)
-    viewcommand()
+    try:
+        backend.delete(selected_tuple[0])
+        e1.delete(0,END)
+        e2.delete(0,END)
+        e3.delete(0,END)
+        e4.delete(0,END)
+        viewcommand()
+    except NameError:
+        errormessage("(No field selected)")
+        
 
 def update_command():
-    backend.update(selected_tuple[0],title_text.get(),author_text.get(),year_text.get(),Pricefil_text.get())
-    viewcommand()
+    try:
+        backend.update(selected_tuple[0],title_text.get(),author_text.get(),year_text.get(),Price_text.get())
+        viewcommand()
+    except NameError:
+        errormessage("(No field selected)")
     
 
 
 window=Tk()
+
 
 window.wm_title("Bookstore")
 
@@ -142,4 +172,5 @@ b5.grid(row=6,column=3)
 
 b6=Button(window,text="Close",width=12,command=window.destroy)
 b6.grid(row=7,column=3)
+
 window.mainloop()
