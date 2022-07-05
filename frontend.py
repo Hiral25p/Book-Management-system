@@ -1,5 +1,18 @@
+from msilib import type_binary
 from tkinter import *
 import backend
+import re
+
+
+def errormessage(error_field):
+    '''Error fo'''
+    error=Tk()
+    error.wm_title("Error")
+    error_lable = Label(error,text=f"Invalid {error_field}")
+    error_lable.grid(row=1,column=0)
+    error.mainloop()
+
+
 
 def viewcommand():
     """
@@ -9,7 +22,8 @@ def viewcommand():
     list1.delete(0,END)
     for row in backend.view():
         list1.insert(END,row)
-    
+
+
 def searchcommand():
     """
     It deletes all the items in the listbox, then inserts the results of the search function into the
@@ -23,10 +37,21 @@ def add_command():
     """
     It takes the data from the entry boxes and passes it to the backend.insert function
     """
-    backend.insert(title_text.get(),author_text.get(),year_text.get(),Price_text.get())
-    list1.delete(0,END)
-    list1.insert(END,"Press View all to see the new entry")
-    viewcommand()
+    if len(re.findall("\d{4}",year_text.get()))==0:
+        errormessage("Year")
+    elif len(re.findall("\d+", Price_text.get()))==0:
+        errormessage("Price")
+    elif len(re.findall("^[a-zA-Z0-9 ]*$", author_text.get()))==0:
+        errormessage("Author")
+    elif len(re.findall("^[a-zA-Z0-9 ]*$", title_text.get()))==0:
+        errormessage("Title")
+    
+    
+    else:
+        backend.insert(title_text.get(),author_text.get(),year_text.get(),Price_text.get())
+        list1.delete(0,END)
+        list1.insert(END,"Press View all to see the new entry")
+        viewcommand()
 
 def get_selected_row(event):
     """
@@ -56,18 +81,24 @@ def delete_command():
     """
     It deletes the selected tuple from the database
     """
-    backend.delete(selected_tuple[0])
-    Title.delete(0,END)
-    Author.delete(0,END)
-    Year.delete(0,END)
-    Price.delete(0,END)
-    viewcommand()
+    try:
+        backend.delete(selected_tuple[0])
+        Title.delete(0,END)
+        Author.delete(0,END)
+        Year.delete(0,END)
+        Price.delete(0,END)
+        viewcommand()
+    except NameError:
+        errormessage("(No field selected)")
 
 def update_command():
     # Updating the selected tuple in the database and then calling the viewcommand() function to
     # update the listbox.
-    backend.update(selected_tuple[0],title_text.get(),author_text.get(),year_text.get(),Price_text.get())
-    viewcommand()
+    try:
+        backend.update(selected_tuple[0],title_text.get(),author_text.get(),year_text.get(),Price_text.get())
+        viewcommand()
+    except NameError:
+        errormessage("(No field selected)")
     
 
 
@@ -117,10 +148,7 @@ sb1.grid(row=2,column=2,rowspan=6,)
 list1.configure(yscrollcommand=sb1.set)
 sb1.configure(command=list1.yview)
 
-
 list1.bind('<<ListboxSelect>>',get_selected_row)
-
-
 
 view_button=Button(window,text="View all",width=12,command=viewcommand)
 view_button.grid(row=2,column=3)
