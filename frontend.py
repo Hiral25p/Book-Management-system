@@ -26,29 +26,28 @@ def add_command():
     backend.insert(title_text.get(),author_text.get(),year_text.get(),Price_text.get())
     list1.delete(0,END)
     list1.insert(END,"Press View all to see the new entry")
+    viewcommand()
 
 def get_selected_row(event):
     """
     It gets the selected row from the listbox and inserts the values into the entry boxes
-    
-    :param event: The event is a tkinter event
     """
     try:
         global selected_tuple
         index = list1.curselection()[0]
         selected_tuple=list1.get(index)
         
-        e1.delete(0,END)
-        e1.insert(END,selected_tuple[1])
+        Title.delete(0,END)
+        Title.insert(END,selected_tuple[1])
 
-        e2.delete(0,END)
-        e2.insert(END,selected_tuple[2])
+        Author.delete(0,END)
+        Author.insert(END,selected_tuple[2])
 
-        e3.delete(0,END)
-        e3.insert(END,selected_tuple[3])
+        Year.delete(0,END)
+        Year.insert(END,selected_tuple[3])
 
-        e4.delete(0,END)
-        e4.insert(END,selected_tuple[4])
+        Price.delete(0,END)
+        Price.insert(END,selected_tuple[4])
     except IndexError:
         pass
     
@@ -58,14 +57,16 @@ def delete_command():
     It deletes the selected tuple from the database
     """
     backend.delete(selected_tuple[0])
-    e1.delete(0,END)
-    e2.delete(0,END)
-    e3.delete(0,END)
-    e4.delete(0,END)
+    Title.delete(0,END)
+    Author.delete(0,END)
+    Year.delete(0,END)
+    Price.delete(0,END)
     viewcommand()
 
 def update_command():
-    backend.update(selected_tuple[0],title_text.get(),author_text.get(),year_text.get(),Pricefil_text.get())
+    # Updating the selected tuple in the database and then calling the viewcommand() function to
+    # update the listbox.
+    backend.update(selected_tuple[0],title_text.get(),author_text.get(),year_text.get(),Price_text.get())
     viewcommand()
     
 
@@ -74,37 +75,37 @@ window=Tk()
 
 window.wm_title("Bookstore")
 
-l1=Label(window,text="Title")
-l1.grid(row=0,column=0)
+Title_Label=Label(window,text="Title")
+Title_Label.grid(row=0,column=0)
 
-l2=Label(window,text="Author")
-l2.grid(row=0,column=2)
+Author_Label=Label(window,text="Author")
+Author_Label.grid(row=0,column=2)
 
-l3=Label(window,text="Year")
-l3.grid(row=1,column=0)
+Year_Label=Label(window,text="Year")
+Year_Label.grid(row=1,column=0)
 
-l4=Label(window,text="Price")
-l4.grid(row=1,column=2)
+Price_Label=Label(window,text="Price")
+Price_Label.grid(row=1,column=2)
 
 
 title_text=StringVar()
-e1=Entry(window,textvariable=title_text)
-e1.grid(row=0,column=1)
+Title=Entry(window,textvariable=title_text)
+Title.grid(row=0,column=1)
 
 
 author_text=StringVar()
-e2=Entry(window,textvariable=author_text)
-e2.grid(row=0,column=3)
+Author=Entry(window,textvariable=author_text)
+Author.grid(row=0,column=3)
 
 
 year_text=StringVar()
-e3=Entry(window,textvariable=year_text)
-e3.grid(row=1,column=1)
+Year=Entry(window,textvariable=year_text)
+Year.grid(row=1,column=1)
 
 
 Price_text=StringVar()
-e4=Entry(window,textvariable=Price_text)
-e4.grid(row=1,column=3)
+Price=Entry(window,textvariable=Price_text)
+Price.grid(row=1,column=3)
 
 list1=Listbox(window,height=6,width=35)
 list1.grid(row=2,column=0,rowspan=6,columnspan=2)
@@ -112,6 +113,7 @@ list1.grid(row=2,column=0,rowspan=6,columnspan=2)
 sb1=Scrollbar(window)
 sb1.grid(row=2,column=2,rowspan=6,)
 
+# Binding the scrollbar to the listbox.
 list1.configure(yscrollcommand=sb1.set)
 sb1.configure(command=list1.yview)
 
@@ -120,26 +122,26 @@ list1.bind('<<ListboxSelect>>',get_selected_row)
 
 
 
-b1=Button(window,text="View all",width=12,command=viewcommand)
-b1.grid(row=2,column=3)
+view_button=Button(window,text="View all",width=12,command=viewcommand)
+view_button.grid(row=2,column=3)
 
 
-b2=Button(window,text="Search Entry",width=12,command=searchcommand)
-b2.grid(row=3,column=3)
+search_button=Button(window,text="Search Entry",width=12,command=searchcommand)
+search_button.grid(row=3,column=3)
 
 
-b3=Button(window,text="Add Entry",width=12,command=add_command)
-b3.grid(row=4,column=3)
+add_button=Button(window,text="Add Entry",width=12,command=add_command)
+add_button.grid(row=4,column=3)
 
 
-b4=Button(window,text="Update",width=12,command=update_command)
-b4.grid(row=5,column=3)
+update_button=Button(window,text="Update",width=12,command=update_command)
+update_button.grid(row=5,column=3)
 
 
-b5=Button(window,text="Delete",width=12,command=delete_command)
-b5.grid(row=6,column=3)
+delete_button=Button(window,text="Delete",width=12,command=delete_command)
+delete_button.grid(row=6,column=3)
 
 
-b6=Button(window,text="Close",width=12,command=window.destroy)
-b6.grid(row=7,column=3)
+exit_button=Button(window,text="Close",width=12,command=window.destroy)
+exit_button.grid(row=7,column=3)
 window.mainloop()
