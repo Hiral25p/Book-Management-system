@@ -36,7 +36,9 @@ def add_command():
     """
     It takes the data from the entry boxes and passes it to the backend.insert function
     """
-    if len(re.findall("\d{4}",year_text.get()))==0:
+    if Title.get()=="" or Author.get()=="" or Year.get()=="" or Price.get()=="":
+        errormessage("(All fields are required)")
+    elif len(re.findall("\d{4}",year_text.get()))==0:
         errormessage("Year")
     elif len(re.findall("\d+", Price_text.get()))==0:
         errormessage("Price")
