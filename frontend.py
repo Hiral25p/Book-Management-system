@@ -3,7 +3,6 @@ from tkinter import *
 import backend
 import re
 
-
 def errormessage(error_field):
     '''Error fo'''
     error=Tk()
@@ -103,6 +102,7 @@ def update_command():
 
 
 window=Tk()
+
 
 window.wm_title("Bookstore")
 
