@@ -38,7 +38,7 @@ def add_command():
     """
     if Title.get()=="" or Author.get()=="" or Year.get()=="" or Price.get()=="":
         errormessage("(All fields are required)")
-    elif len(re.findall("\d{4}",year_text.get()))==0:
+    elif len(re.findall("^\d{4}$",year_text.get()))==0:
         errormessage("Year")
     elif len(re.findall("\d+", Price_text.get()))==0:
         errormessage("Price")
@@ -96,8 +96,17 @@ def update_command():
     # Updating the selected tuple in the database and then calling the viewcommand() function to
     # update the listbox.
     try:
-        backend.update(selected_tuple[0],title_text.get(),author_text.get(),year_text.get(),Price_text.get())
-        viewcommand()
+        if len(re.findall("^\d{4}$",year_text.get()))==0:
+            errormessage("Year")
+        elif len(re.findall("\d+", Price_text.get()))==0:
+            errormessage("Price")
+        elif len(re.findall("^[a-zA-Z0-9 ]*$", author_text.get()))==0:
+            errormessage("Author")
+        elif len(re.findall("^[a-zA-Z0-9 ]*$", title_text.get()))==0:
+            errormessage("Title")
+        else:
+            backend.update(selected_tuple[0],title_text.get(),author_text.get(),year_text.get(),Price_text.get())
+            viewcommand()
     except NameError:
         errormessage("(No field selected)")
     
